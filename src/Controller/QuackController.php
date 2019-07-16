@@ -27,6 +27,7 @@ class QuackController extends AbstractController
 
     /**
      * @Route("/new", name="quack_new", methods={"GET","POST"})
+     * @throws \Exception
      */
     public function new(Request $request): Response
     {
@@ -35,6 +36,10 @@ class QuackController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+
+            $quack->setAuthor($this->getUser());
+            $quack->setCreatedAt(new \DateTime('now', (new \DateTimeZone('Europe/Paris'))));
+
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($quack);
             $entityManager->flush();
@@ -53,6 +58,8 @@ class QuackController extends AbstractController
      */
     public function show(Quack $quack): Response
     {
+        $this->denyAccessUnlessGranted('view', $quack);
+
         return $this->render('quack/show.html.twig', [
             'quack' => $quack,
         ]);
@@ -63,13 +70,16 @@ class QuackController extends AbstractController
      */
     public function edit(Request $request, Quack $quack): Response
     {
+        $this->denyAccessUnlessGranted('edit', $quack);
+
         $form = $this->createForm(QuackType::class, $quack);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
+                $this->getDoctrine()->getManager()->flush();
 
-            return $this->redirectToRoute('quack_index');
+                return $this->redirectToRoute('quack_index');
+
         }
 
         return $this->render('quack/edit.html.twig', [
@@ -78,17 +88,20 @@ class QuackController extends AbstractController
         ]);
     }
 
+
     /**
      * @Route("/{id}", name="quack_delete", methods={"DELETE"})
      */
     public function delete(Request $request, Quack $quack): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$quack->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->remove($quack);
-            $entityManager->flush();
-        }
+        if ($this->isGranted('ROLE_USER' && $quack->getAuthor()->getId() == $this->getUser()->getId())) {
 
+            if ($this->isCsrfTokenValid('delete' . $quack->getId(), $request->request->get('_token'))) {
+                $entityManager = $this->getDoctrine()->getManager();
+                $entityManager->remove($quack);
+                $entityManager->flush();
+            }
+        }
         return $this->redirectToRoute('quack_index');
     }
 }
