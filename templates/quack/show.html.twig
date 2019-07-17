@@ -23,8 +23,8 @@
     </table>
 
     <a href="{{ path('quack_index') }}">back to list</a>
-
-    <a href="{{ path('quack_edit', {'id': quack.id}) }}">edit</a>
-
+    {% if is_granted('edit', quack) %}
+        <a href="{{ path('quack_edit', {'id': quack.id}) }}">edit</a>
+    {% endif %}
     {{ include('quack/_delete_form.html.twig') }}
 {% endblock %}

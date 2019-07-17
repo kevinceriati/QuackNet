@@ -10,38 +10,65 @@
     <h1>Quack index</h1>
     <a href="{{ path('quack_new') }}">Create new</a>
 
-    <table class="table">
-    <thead>
-    <tr>
-        <th>Id</th>
-        <th>Content</th>
-        <th>Created_at</th>
-        <th>actions</th>
-    </tr>
-    </thead>
-    <tbody>
-    {% for quack in quacks %}
-        <tr>
-            <td>{{ quack.id }}</td>
-            <td>{{ quack.content }}</td>
-            <td>{{ quack.createdAt ? quack.createdAt|date('Y-m-d H:i:s') : '' }}</td>
-            <td>
-                {% for quack in quacks %}
-                    <a href="{{ path('quack_show', {'id': quack.id}) }}">show</a>
-                    {% if is_granted('edit', quack) %}
-                        <a href="{{ path('quack_edit', {'id': quack.id}) }}">edit</a>
-                    {% endif %}
-                {% endfor %}
-            </td>
-        </tr>
+    {#<table class="table">#}
+    {#<thead>#}
+    {#<tr>#}
+        {#<th>Id</th>#}
+        {#<th>Content</th>#}
+        {#<th>Created_at</th>#}
+        {#<th>actions</th>#}
+    {#</tr>#}
+    {#</thead>#}
+
+
+    <section class="container">
+        <div class="d-flex mx-auto row justify-content-around pb-5">
+        {% for quack in quacks %}
+        <div class=" mx-3 my-2 w-25">
+            <div class="card">
+                <img class="card-img-top" src="{{ asset(quack.picture) }}" alt="Card image cap">
+                <div class="card-body">
+                    <h5 class="card-title">{{ quack.author.duckname }}</h5>
+                    <p class="card-text">{{ quack.content }}</p>
+                    <tr>
+                    <p class="text-light">{{ quack.createdAt ? quack.createdAt|date('Y-m-d H:i:s') : '' }}</p>
+
+                            <a href="{{ path('quack_show', {'id': quack.id}) }}">show</a>
+                            {% if is_granted('edit', quack) %}
+                                <a href="{{ path('quack_edit', {'id': quack.id}) }}">edit</a>
+                            {% endif %}
+
+                    {#<a href="#" class="btn btn-primary">Go somewhere</a>#}
+                </div>
+            </div>
+        </div>
+
+
+
+        {#<tr>#}
+            {#<td>{{ quack.id }}</td>#}
+            {#<td>{{ quack.content }}</td>#}
+            {#<td>{{ quack.createdAt ? quack.createdAt|date('Y-m-d H:i:s') : '' }}</td>#}
+            {#<td>#}
+                {#{% for quack in quacks %}#}
+                    {#<a href="{{ path('quack_show', {'id': quack.id}) }}">show</a>#}
+                    {#{% if is_granted('edit', quack) %}#}
+                        {#<a href="{{ path('quack_edit', {'id': quack.id}) }}">edit</a>#}
+                    {#{% endif %}#}
+                {#{% endfor %}#}
+            {#</td>#}
+        {#</tr>#}
     {% else %}
-        <tr>
-            <td colspan="4">no records found</td>
-        </tr>
-        </tbody>
-        </table>
+        <div>
+            <p>no records found</p>
+        </div>
+
+
+        {#</table>#}
 
     {% endfor %}
+        </div>
+    </section>
 
 
 
