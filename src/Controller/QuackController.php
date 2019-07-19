@@ -25,6 +25,7 @@ class QuackController extends AbstractController
      */
     public function index(QuackRepository $quackRepository, Quack $quack = null, Request $request): Response
     {
+
         $allForms = $quackRepository->findAll();
 //        foreach post creat new form for this post
 
@@ -97,12 +98,14 @@ class QuackController extends AbstractController
     /**
      * @Route("/{id}", name="quack_show", methods={"GET"})
      */
-    public function show(Quack $quack): Response
+    public function show(Quack $quack, Request $request): Response
     {
+
 //        $this->denyAccessUnlessGranted('view', $quack);
 
         return $this->render('quack/show.html.twig', [
             'quack' => $quack,
+
         ]);
     }
 

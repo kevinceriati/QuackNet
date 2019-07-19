@@ -50,12 +50,11 @@ class CommentController extends AbstractController
 
     /**
      * @Route("/{id}", name="comment_delete", methods={"DELETE"})
-     * @param Request $request
-     * @param Comment $comment
-     * @return Response
      */
     public function delete(Request $request, Comment $comment): Response
     {
+//        if ($this->isGranted('ROLE_USER' && $quack->getAuthor()->getId() == $this->getUser()->getId())) {
+
         if ($this->isCsrfTokenValid('delete' . $comment->getId(), $request->request->get('_token'))) {
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->remove($comment);

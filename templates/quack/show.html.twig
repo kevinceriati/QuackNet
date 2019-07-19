@@ -43,15 +43,6 @@
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
-                        <div class="modal-body">
-                            {{ form_start( {'action': path('comment_edit',  {'id': comment.id}), 'method': 'POST'}) }}
-                            <div class="d-flex justify-content-center">
-                                {{ form_row(content) }}
-                            </div>
-                            {{ form_widget() }}
-                            <button class="btn btn-success">{{ button_label|default('Save') }}</button>
-                            {{ form_end() }}
-                        </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary"
                                     data-dismiss="modal">Close
