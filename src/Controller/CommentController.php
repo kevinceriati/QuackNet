@@ -24,34 +24,45 @@ class CommentController extends AbstractController
 
 
     /**
-     * @Route("/new", name="comment_new", methods={"GET","POST"})
-     * @throws \Exception
+     * @Route("comment/{id}/edit", name="comment_edit", methods={"GET","POST"})
+     * @param Request $request
+     * @param Comment $comment
+     * @return Response
      */
-    public function new(Request $request, Quack $quack): Response
+    public function edit(Request $request, Comment $comment): Response
     {
-//        $com = new Comment();
-//        $form = $this->createForm(CommentType::class, $com);
-//        $form->handleRequest($request);
-//
-//        if ($form->isSubmitted() && $form->isValid()) {
-//            $com->setAuthor($this->getUser());
-//            $com->setCreatedAt(new \DateTime('now', (new \DateTimeZone('Europe/Paris'))));
-//            $com->setQuack($quack);
-//
-//
-//            $entityManager = $this->getDoctrine()->getManager();
-//            $entityManager->persist($com);
-//            $entityManager->flush();
-//
-//            return $this->redirectToRoute('quack_index');
-//        }
-//
-//        return $this->render('quack/new.html.twig', [
-//            'quack' => $com,
-//            'form' => $form->createView(),
-//        ]);
+        $this->denyAccessUnlessGranted('edit', $comment);
+
+        $form = $this->createForm(CommentType::class, $comment);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->getDoctrine()->getManager()->flush();
+
+            return $this->redirectToRoute('quack_index');
+        }
+
+        return $this->render('comment/edit.html.twig', [
+            'quack' => $comment->getQuack(),
+            'form' => $form->createView(),
+        ]);
     }
 
-
+    /**
+     * @Route("/{id}", name="comment_delete", methods={"DELETE"})
+     * @param Request $request
+     * @param Comment $comment
+     * @return Response
+     */
+    public function delete(Request $request, Comment $comment): Response
+    {
+        if ($this->isCsrfTokenValid('delete' . $comment->getId(), $request->request->get('_token'))) {
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->remove($comment);
+            $entityManager->flush();
+        }
+//        }
+        return $this->redirectToRoute('quack_index');
+    }
 
 }
