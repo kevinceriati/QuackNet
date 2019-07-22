@@ -54,6 +54,11 @@ class Ducks implements UserInterface
      */
     private $comments;
 
+    /**
+     * @ORM\Column(type="json",nullable=true)
+     */
+    private $roles = [];
+
     public function __construct()
     {
         $this->quacks = new ArrayCollection();
@@ -139,9 +144,12 @@ class Ducks implements UserInterface
      *
      * @return (Role|string)[] The user roles
      */
-    public function getRoles()
+    public function getRoles():array
     {
-        return array('ROLE_USER');
+        $roles = $this->roles??[];
+        // guarantee every user at least has ROLE_USER
+        $roles[] = 'ROLE_USER';
+        return array_unique($roles);
     }
 
     /**
@@ -235,6 +243,13 @@ class Ducks implements UserInterface
                 $comment->setAuthor(null);
             }
         }
+
+        return $this;
+    }
+
+    public function setRoles(array $roles): self
+    {
+        $this->roles = $roles;
 
         return $this;
     }

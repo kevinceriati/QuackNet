@@ -74,14 +74,16 @@ html {
     background-color: #c0392b !important;
 }
 
-h4 {
+.title {
     font-size: 100px;
     font-weight: 300;
     font-family: 'ShortBaby' ;
 }
 
-/*h5 {*/
-    /*font-size: 50px;*/
-    /*font-weight: 200;*/
-    /*font-family: 'ShortBaby' ;*/
-/*}*/
+.link {
+    font-family: 'ShortBaby' ;
+}
+
+#duckname {
+    font-family: ShortBaby;
+}

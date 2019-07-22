@@ -3,8 +3,9 @@
 namespace App\Controller;
 
 use App\Entity\Comment;
-use App\Entity\Quack;
 use App\Form\CommentType;
+use App\Form\CommentTypeSafeDelete;
+use App\Repository\CommentRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
@@ -13,12 +14,40 @@ use Symfony\Component\HttpFoundation\Response;
 class CommentController extends AbstractController
 {
     /**
-     * @Route("/comment", name="comment")
+     * @Route("/comment", name="comment", methods={"GET"})
+     * @Route("comment/{id}/hide", name="comment_hide", methods={"POST"})
      */
-    public function index()
+    public function index(CommentRepository $commentRepository, Comment $comment = null, Request $request)
     {
+        $allForms = $commentRepository->findAll();
+
+        foreach ($allForms as $index => $form) {
+            $com = new Comment();
+            $allForms[$index] = $this->createForm(CommentTypeSafeDelete::class, $com);
+        }
+
+        foreach ($allForms as $form) {
+            $form->handleRequest($request);
+        }
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            if($comment->getIsDeleted() == false) {
+                $comment->setIsDeleted(true);
+            } else {
+                $comment->setIsDeleted(false);
+            }
+
+            $this->getDoctrine()->getManager()->flush();
+
+            return $this->redirectToRoute('comment');
+        }
+        foreach ($allForms as &$form) {
+            $form = $form->createView();
+        }
+
         return $this->render('comment/index.html.twig', [
-            'controller_name' => 'CommentController',
+            'comments' => $commentRepository->findBy(array(), array('createdAt' => 'DESC')),
+            'form' => $allForms
         ]);
     }
 
@@ -60,7 +89,6 @@ class CommentController extends AbstractController
             $entityManager->remove($comment);
             $entityManager->flush();
         }
-//        }
         return $this->redirectToRoute('quack_index');
     }
 

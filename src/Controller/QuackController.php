@@ -41,6 +41,7 @@ class QuackController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $com->setAuthor($this->getUser());
+            $com->setIsDeleted(false);
             $com->setCreatedAt(new \DateTime('now', (new \DateTimeZone('Europe/Paris'))));
             $com->setQuack($quack);
 
@@ -97,11 +98,12 @@ class QuackController extends AbstractController
 
     /**
      * @Route("/{id}", name="quack_show", methods={"GET"})
+
      */
     public function show(Quack $quack, Request $request): Response
     {
 
-//        $this->denyAccessUnlessGranted('view', $quack);
+
 
         return $this->render('quack/show.html.twig', [
             'quack' => $quack,
