@@ -32,6 +32,6 @@ security:
 #   - { path: ^/admin, roles: ROLE_ADMIN }
 #   - { path: ^/profile, roles: ROLE_USER }
     - { path: ^/quack/new, roles: ROLE_USER }
-#    - { path: ^/, roles: ROLE_ADMIN }
+    - { path: ^/comment, roles: ROLE_ADMIN }
 
 

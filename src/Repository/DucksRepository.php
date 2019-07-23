@@ -29,6 +29,8 @@ class DucksRepository extends ServiceEntityRepository implements UserLoaderInter
             ->getOneOrNullResult();
     }
 
+
+
     // /**
     //  * @return Ducks[] Returns an array of Ducks objects
     //  */

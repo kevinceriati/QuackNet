@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Quack{% endblock %}
+
+{% block body %}
+{{ dump(quacks) }}
+    {% for quack in quacks %}
+
+<h1>Quack</h1>
+<div class="container">
+    <div class="card">
+        <div class="card-header">
+            <div class="card-title">
+                <h3>{{ quack.author.duckname }}</h3>
+            </div>
+        </div>
+        <div class="body row no-gutters">
+            <div class="col-md-2">
+                <img class="card-img" src="{{ asset(quack.picture) }}" alt="">
+            </div>
+            <div class="col-md-10">
+                <p class="card-text">{{ quack.content }}</p>
+            </div>
+        </div>
+        <div class="card-footer">
+            comments
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+
+{% endblock %}

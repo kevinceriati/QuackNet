@@ -96,20 +96,6 @@ class QuackController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/{id}", name="quack_show", methods={"GET"})
-
-     */
-    public function show(Quack $quack, Request $request): Response
-    {
-
-
-
-        return $this->render('quack/show.html.twig', [
-            'quack' => $quack,
-
-        ]);
-    }
 
     /**
      * @Route("/{id}/edit", name="quack_edit", methods={"GET","POST"})
@@ -158,4 +144,27 @@ class QuackController extends AbstractController
 //        }
         return $this->redirectToRoute('quack_index');
     }
+
+
+
+    /**
+     * @Route("/resultat", name="quack_resultat", methods={"GET"})
+     */
+    public function keyWordRequest (Request $request, QuackRepository $quackRepository) {
+
+
+        return $this->render("quack/searchResult.html.twig", ["quacks" => $quackRepository->searchByKeyword($request->query->get('duckname'))]);
+    }
+
+    /**
+     * @Route("/{id}", name="quack_show", methods={"GET"})
+
+     */
+    public function show(Quack $quack, Request $request): Response
+    {
+        return $this->render('quack/show.html.twig', [
+            'quack' => $quack,
+        ]);
+    }
+
 }
