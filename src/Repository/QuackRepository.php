@@ -19,17 +19,28 @@ class QuackRepository extends ServiceEntityRepository
         parent::__construct($registry, Quack::class);
     }
 
-    public function searchByKeyword ($duckname) {
+    public function searchByKeyword($val)
+    {
 
-        return $this->createQueryBuilder('p')   // l'alia reprsente la table dans laquelle on est, ici 'p' => quack
-            ->join('p.author', 'c')        // Ici p.author vient faire la liaison avec la table Comment (p=>Quack mais "author" n'est pas dans Quanck, donc "c" devient l'alias de notre table de liaison avec l'entité Comment)
-            ->addSelect('c')
-            ->orWhere('c.duckname LIKE :duckname')
-            ->setParameter('duckname', '%'.$duckname.'%')
+        return $this->createQueryBuilder('p')// l'alia reprsente la table dans laquelle on est, ici 'p' => quack
+        ->join('p.author', 'c')// Ici p.author vient faire la liaison avec la table Comment (p=>Quack mais "author" n'est pas dans Quanck, donc "c" devient l'alias de notre table de liaison avec l'entité Comment)
+        ->addSelect('c')
+            ->orWhere('c.duckname LIKE :val')
+            ->orWhere('p.content LIKE :val')
+            ->setParameter('val', '%' . $val . '%')
             ->getQuery()
             ->getResult();
     }
 
+    public function searchById($val)
+    {
+
+        return $this->createQueryBuilder('p')// l'alia reprsente la table dans laquelle on est, ici 'p' => quack
+            ->andWhere('p.id = :val')
+            ->setParameter('val',  $val)
+            ->getQuery()
+            ->getResult();
+    }
 
 
     // /**

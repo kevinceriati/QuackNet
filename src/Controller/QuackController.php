@@ -1,18 +1,18 @@
 <?php
 
-namespace App\Controller;
+    namespace App\Controller;
 
-use App\Entity\Comment;
-use App\Entity\Quack;
-use App\Form\CommentType;
-use App\Form\QuackType;
-use App\Repository\CommentRepository;
-use App\Repository\QuackRepository;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
-use App\Services\FileUploader;
+    use App\Entity\Comment;
+    use App\Entity\Quack;
+    use App\Form\CommentType;
+    use App\Form\QuackType;
+    use App\Repository\CommentRepository;
+    use App\Repository\QuackRepository;
+    use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+    use Symfony\Component\HttpFoundation\Request;
+    use Symfony\Component\HttpFoundation\Response;
+    use Symfony\Component\Routing\Annotation\Route;
+    use App\Services\FileUploader;
 
 /**
  * @Route("/quack")
@@ -146,19 +146,19 @@ class QuackController extends AbstractController
     }
 
 
-
     /**
      * @Route("/resultat", name="quack_resultat", methods={"GET"})
      */
-    public function keyWordRequest (Request $request, QuackRepository $quackRepository) {
+    public function keyWordRequest(Request $request, QuackRepository $quackRepository)
+    {
 
-
-        return $this->render("quack/searchResult.html.twig", ["quacks" => $quackRepository->searchByKeyword($request->query->get('duckname'))]);
+        $keyword = $request->query->get('duckname');
+        $result = $quackRepository->searchByKeyword($keyword);
+        return $this->render("quack/searchResult.html.twig", ["quacks" => $result]);
     }
 
     /**
      * @Route("/{id}", name="quack_show", methods={"GET"})
-
      */
     public function show(Quack $quack, Request $request): Response
     {
