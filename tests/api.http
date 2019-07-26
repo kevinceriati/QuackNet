@@ -15,3 +15,27 @@ GET http://localhost:8000/api/quack/1
 DELETE http://localhost:8000/api/quack/11
 
 ###
+
+
+POST http://localhost:8000/api/duck
+
+{
+    "firstname":"Kevin",
+    "lastname":"Brodator",
+    "duckname":"beaupianiste",
+    "email":"quack@quack.quack",
+    "password":"1234"
+}
+
+###
+
+PUT http://localhost:8000/api/duck/8
+Authorization: basic DuCK_mE 1234
+
+{   "firstname":"Billy",
+    "lastname":"Bob",
+    "email":"bla@bla.com",
+    "password":"123456"
+}
+
+###

@@ -9,6 +9,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\Serializer\SerializerInterface;
 
 /**
  * @Route("/ducks")
@@ -28,14 +30,16 @@ class DucksController extends AbstractController
     /**
      * @Route("/new", name="ducks_new", methods={"GET","POST"})
      */
-    public function new(Request $request): Response
+    public function new(Request $request, UserPasswordEncoderInterface $encoder): Response
     {
         $duck = new Ducks();
-        $form = $this->createForm(DucksType::class, $duck);
+        $form = $this->createForm(DucksType::class, $duck, ["password_set" => true]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $duck->setRoles(['ROLE_USER']);
+
+            $duck->setPassword($encoder->encodePassword($duck, $duck->newpassword));
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($duck);
             $entityManager->flush();
@@ -62,12 +66,15 @@ class DucksController extends AbstractController
     /**
      * @Route("/{id}/edit", name="ducks_edit", methods={"GET","POST"})
      */
-    public function edit(Request $request, Ducks $duck): Response
+    public function edit(Request $request, Ducks $duck, UserPasswordEncoderInterface $encoder): Response
     {
         $form = $this->createForm(DucksType::class, $duck);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            if ($duck->newpassword) {
+                $duck->setPassword($encoder->encodePassword($duck, $duck->newpassword));
+            }
             $this->getDoctrine()->getManager()->flush();
 
             return $this->redirectToRoute('ducks_index');
@@ -84,7 +91,7 @@ class DucksController extends AbstractController
      */
     public function delete(Request $request, Ducks $duck): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$duck->getId(), $request->request->get('_token'))) {
+        if ($this->isCsrfTokenValid('delete' . $duck->getId(), $request->request->get('_token'))) {
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->remove($duck);
             $entityManager->flush();
@@ -92,4 +99,7 @@ class DucksController extends AbstractController
 
         return $this->redirectToRoute('ducks_index');
     }
+
+
+
 }

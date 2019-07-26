@@ -15,6 +15,8 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\Serializer\SerializerInterface;
 
 
 class ApiController extends AbstractController
@@ -63,15 +65,93 @@ class ApiController extends AbstractController
 
 //        if ($this->isGranted('ROLE_USER' && $quack->getAuthor()->getId() == $this->getUser()->getId())) {
 //dd($quack);
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->remove($quack);
-            $entityManager->flush();
+        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager->remove($quack);
+        $entityManager->flush();
 
 //        }
         return new JsonResponse(
             null,
             JsonResponse::HTTP_NO_CONTENT
-        );    }
+        );
+    }
+
+    /*
+        /**
+         * @Route("/api/duck", methods={"POST"})
+
+   public function postNewDucks(Request $request, UserPasswordEncoderInterface $encoder, SerializerInterface $serializer): Response
+    {
+
+        $duck = $serializer->deserialize($request->getContent(), Ducks::class,"json");
+        $duck->setRoles(['ROLE_USER']);
+        $duck->setPassword($encoder->encodePassword($duck, $duck->newpassword));
+
+
+        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager->persist($duck);
+        $entityManager->flush();
+        return $this->json($duck);
+
+    }
+*/
+
+    /**
+     * @Route("/api/duck", methods={"POST"})
+     * @param Request $request
+     * @param UserPasswordEncoderInterface $encoder
+     * @return Response
+     */
+    public function postNewDucks(Request $request, UserPasswordEncoderInterface $encoder): Response
+    {
+        $content = $request->getContent();
+
+        $data = json_decode($content, true);
+        $duck = new Ducks();
+        $duck->setFirstname($data["firstname"]);
+        $duck->setLastname($data["lastname"]);
+        $duck->setDuckname($data["duckname"]);
+        $duck->setEmail($data["email"]);
+        $duck->setRoles(['ROLE_USER']);
+        $duck->setPassword($encoder->encodePassword($duck, $data['password']));
+
+        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager->persist($duck);
+        $entityManager->flush();
+
+        return $this->json($duck->jsonSerializeCreatNewUser());
+    }
+
+
+    /**
+     * @Route("/api/duck/{duck}", methods={"PUT"})
+     */
+    public function putDuckEdit(Request $request, UserPasswordEncoderInterface $encoder, Ducks $duck): Response
+    {
+        $content = $request->getContent();
+
+        $data = json_decode($content, true);
+
+        if (isset($data["firstname"])) {
+            $duck->setFirstname($data["firstname"]);
+        }
+
+        if (isset($data["lastname"])) {
+            $duck->setLastname($data["lastname"]);
+        }
+
+        if (isset($data["email"])) {
+            $duck->setEmail($data["email"]);
+        }
+
+        if (isset($data["password"])) {
+            $duck->setPassword($encoder->encodePassword($duck, $data["password"]));
+        }
+
+        $this->getDoctrine()->getManager()->flush();
+
+        return $this->json($duck->jsonSerializeUpdateUser());
+    }
 
 
 

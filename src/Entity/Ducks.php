@@ -59,6 +59,8 @@ class Ducks implements UserInterface, \JsonSerializable
      */
     private $roles = [];
 
+    public $newpassword;
+
     public function __construct()
     {
         $this->quacks = new ArrayCollection();
@@ -263,6 +265,30 @@ class Ducks implements UserInterface, \JsonSerializable
      */
     public function jsonSerialize()
     {
-       return $this->duckname;
+       return [$this->duckname];
     }
+
+
+    public function jsonSerializeCreatNewUser()
+    {
+        return [
+            "firstname"=>$this->getFirstname(),
+            "lastname"=>$this->getLastname(),
+            "duckname"=>$this->getDuckname(),
+            "email"=>$this->getEmail(),
+            "password"=>$this->getPassword(),
+        ];
+    }
+
+    public function jsonSerializeUpdateUser()
+    {
+        return [
+            "firstname"=>$this->getFirstname(),
+            "lastname"=>$this->getLastname(),
+            "email"=>$this->getEmail(),
+            "password"=>$this->getPassword(),
+        ];
+    }
+
+
 }

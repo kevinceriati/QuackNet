@@ -3,8 +3,12 @@
 namespace App\Form;
 
 use App\Entity\Ducks;
+use function PHPSTORM_META\type;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
+use Symfony\Component\Form\Extension\Core\Type\PasswordType;
+use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -16,13 +20,12 @@ class DucksType extends AbstractType
             ->add('firstname')
             ->add('lastname')
             ->add('duckname')
-            ->add('email')
-            ->add('password')
-            ->add('roles', ChoiceType::class, [
-                "choices" => [
-                    "Admin" => "ROLE_ADMIN",
-                ],
-                "multiple" => true,
+            ->add('email', EmailType::class)
+            ->add('newpassword', RepeatedType::class, [
+                "first_name" => "password",
+                "second_name" => "passwordCheck",
+                "type" => PasswordType::class,
+                "required" => $options["password_set"],
             ]);
     }
 
@@ -30,6 +33,7 @@ class DucksType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Ducks::class,
+            'password_set' => false,
         ]);
     }
 }
