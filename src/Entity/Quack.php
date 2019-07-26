@@ -53,7 +53,7 @@ class Quack implements \JsonSerializable
      */
     private $comments;
 
-    public function __construct()
+    public function __construct(
     {
         $this->comments = new ArrayCollection();
     }
